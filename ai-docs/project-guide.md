@@ -103,28 +103,27 @@ The following is a list of tasks to be completed within the next 24 hours to adv
     - Start button: Let’s begin by answering 10 quick questions!
   - [ ] Input
     - [ ] After selecting a country, fetch and display a list of areas (states/regions) for that country using react-autosuggest.
-      - [ ] Store country list as a JSON on the frontend.
+      - [x] Store country list as a JSON on the frontend.
       - [ ] Fetch city list from the API.
         - Send a POST request to `https://countriesnow.space/api/v0.1/countries/cities` with `{"country":"United States"}`.
         - No keys required, so make the request directly from the frontend.
     - [x] Allow input for all 10 questions in a single screen, in sequence.
-  - [ ] Display Results
-    - [ ] Show three cities in cards.
-      - [ ] Display images, city name, and reasons.
-      - [ ] "More" button
+  - [x] Display Results
+    - [x] Show three cities in cards.
+      - [x] Display images, city name, and reasons.
+      - [x] "More" button
         - Show remaining images.
         - Add a link to Google Maps in the top-right corner.
-          - Replace spaces with "+" in the city name for the map link, e.g., `Ubud, Bali (Indonesia)` -> `Ubud+Bali+Indonesia`.
           - Google Maps link: `https://www.google.com/maps/place/${city}`
         - Optional: Implement infinite scrolling if time permits.
     - [ ] "Try Again" button to navigate back to the homepage.
 
 2. Required Components
   - [ ] City selection component
-    - [ ] Country selection component
+    - [x] Country selection component
     - [ ] City selection component
-  - [ ] Question component
-    - [ ] Component to display options A, B, C, D.
+  - [x] Question component
+    - [x] Component to display options A, B, C, D.
 
 ---
 

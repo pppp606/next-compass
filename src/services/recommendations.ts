@@ -2,7 +2,13 @@ import axios from 'axios';
 import OpenAI from "openai";
 import { questions } from '@/components/questions';
 
-type UnsplashResponseItem = {
+export type RecommendationsCity = {
+  name: string;
+  reasons: string;
+  images: string[];
+}
+
+export type UnsplashResponseItem = {
   created_at: string;
   updated_at: string;
   urls: {
@@ -70,15 +76,14 @@ For each destination, include:
   return response.choices[0].message.content;
 }
 
-export async function getImage(city: string, per_page: number = 20) {
+export async function getImage(city: string, per_page: number = 30) {
   const response = await axios.get(`https://api.unsplash.com/search/photos`, {
     params: {
       query: city,
-      orientation: 'landscape',
       per_page,
       client_id: process.env.UNSPLASH_API_ACCESS_KEY,
     },
   });
 
-  return response.data.results.map((result: UnsplashResponseItem) => result.urls.regular);
+  return response.data.results.map((result: UnsplashResponseItem) => result.urls.small);
 }

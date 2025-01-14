@@ -1,11 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getRecommendations, getImage } from '@/services/recommendations';
-
-export type RecommendationsCity = {
-  name: string;
-  reasons: string;
-  images: string[];
-}
+import { getRecommendations, getImage, RecommendationsCity } from '@/services/recommendations';
 
 export async function POST(request: NextRequest) {
   try {

@@ -4,9 +4,11 @@
 import React, { useState } from 'react';
 import { questions } from '@/components/questions';
 import { Button } from '@/components/button';
+import { RecommendationsCity } from '@/services/recommendations';
+import { CountryInput } from '@/components/countryInput';
 import axios from 'axios';
 
-type PostRecommendationsData = {
+export type PostRecommendationsData = {
   country: string,
   city: string,
   answers: string[],
@@ -14,173 +16,14 @@ type PostRecommendationsData = {
 
 export default function Page() {
   const [iconMove, setIconMove] = React.useState(false);
-  const [step, setStep] = React.useState(0);
+  const [step, setStep] = React.useState(1);
   const [postRecommendationsData, setPostRecommendationsData] = useState<PostRecommendationsData>({
     country: '',
     city: '',
     answers: [],
   });
-
-  const [recommendations, setRecommendations] = useState(
-    [
-      {
-        "name": "Sapporo  ",
-        "reasons": "Sapporo offers a blend of urban conveniences and access to nature, featuring beautiful parks and mountainous surroundings perfect for relaxation. The city experiences all four distinct seasons, making it ideal for someone seeking seasonal diversity. Moreover, Sapporo is known for its unique food culture, including famous ramen and seafood dishes, aligning with your adventurous palate while still providing a suburban, quiet atmosphere.",
-        "images": [
-          "https://images.unsplash.com/photo-1514186077719-5f31a164c12e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w2OTYwNzZ8MHwxfHNlYXJjaHwxfHxTYXBwb3JvJTIwJTIwfGVufDB8MHx8fDE3MzY4NjQxMjB8MA&ixlib=rb-4.0.3&q=80&w=1080",
-          "https://images.unsplash.com/photo-1656404113186-ee31a6ee8e65?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w2OTYwNzZ8MHwxfHNlYXJjaHwyfHxTYXBwb3JvJTIwJTIwfGVufDB8MHx8fDE3MzY4NjQxMjB8MA&ixlib=rb-4.0.3&q=80&w=1080",
-          "https://images.unsplash.com/photo-1598176762419-7abc6840533a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w2OTYwNzZ8MHwxfHNlYXJjaHwzfHxTYXBwb3JvJTIwJTIwfGVufDB8MHx8fDE3MzY4NjQxMjB8MA&ixlib=rb-4.0.3&q=80&w=1080",
-          "https://images.unsplash.com/photo-1710691191549-1e3e67036fdd?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w2OTYwNzZ8MHwxfHNlYXJjaHw0fHxTYXBwb3JvJTIwJTIwfGVufDB8MHx8fDE3MzY4NjQxMjB8MA&ixlib=rb-4.0.3&q=80&w=1080",
-          "https://images.unsplash.com/photo-1696053066632-3ef25f7bb0eb?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w2OTYwNzZ8MHwxfHNlYXJjaHw1fHxTYXBwb3JvJTIwJTIwfGVufDB8MHx8fDE3MzY4NjQxMjB8MA&ixlib=rb-4.0.3&q=80&w=1080",
-          "https://images.unsplash.com/photo-1707745957273-095f00615590?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w2OTYwNzZ8MHwxfHNlYXJjaHw2fHxTYXBwb3JvJTIwJTIwfGVufDB8MHx8fDE3MzY4NjQxMjB8MA&ixlib=rb-4.0.3&q=80&w=1080",
-          "https://images.unsplash.com/photo-1707745507046-2d3eea777837?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w2OTYwNzZ8MHwxfHNlYXJjaHw3fHxTYXBwb3JvJTIwJTIwfGVufDB8MHx8fDE3MzY4NjQxMjB8MA&ixlib=rb-4.0.3&q=80&w=1080",
-          "https://images.unsplash.com/photo-1645611034528-437acf187829?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w2OTYwNzZ8MHwxfHNlYXJjaHw4fHxTYXBwb3JvJTIwJTIwfGVufDB8MHx8fDE3MzY4NjQxMjB8MA&ixlib=rb-4.0.3&q=80&w=1080",
-          "https://images.unsplash.com/photo-1574835154663-3d11951f9b67?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w2OTYwNzZ8MHwxfHNlYXJjaHw5fHxTYXBwb3JvJTIwJTIwfGVufDB8MHx8fDE3MzY4NjQxMjB8MA&ixlib=rb-4.0.3&q=80&w=1080",
-          "https://images.unsplash.com/photo-1693974677145-80fac5b696ac?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w2OTYwNzZ8MHwxfHNlYXJjaHwxMHx8U2FwcG9ybyUyMCUyMHxlbnwwfDB8fHwxNzM2ODY0MTIwfDA&ixlib=rb-4.0.3&q=80&w=1080",
-          "https://images.unsplash.com/photo-1693975045908-1b4d44cfbf97?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w2OTYwNzZ8MHwxfHNlYXJjaHwxMXx8U2FwcG9ybyUyMCUyMHxlbnwwfDB8fHwxNzM2ODY0MTIwfDA&ixlib=rb-4.0.3&q=80&w=1080",
-          "https://images.unsplash.com/photo-1488273478515-f13bd0b73037?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w2OTYwNzZ8MHwxfHNlYXJjaHwxMnx8U2FwcG9ybyUyMCUyMHxlbnwwfDB8fHwxNzM2ODY0MTIwfDA&ixlib=rb-4.0.3&q=80&w=1080",
-          "https://images.unsplash.com/photo-1519105467443-4779d0fb729d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w2OTYwNzZ8MHwxfHNlYXJjaHwxM3x8U2FwcG9ybyUyMCUyMHxlbnwwfDB8fHwxNzM2ODY0MTIwfDA&ixlib=rb-4.0.3&q=80&w=1080",
-          "https://images.unsplash.com/photo-1709459991438-fabb89f2873c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w2OTYwNzZ8MHwxfHNlYXJjaHwxNHx8U2FwcG9ybyUyMCUyMHxlbnwwfDB8fHwxNzM2ODY0MTIwfDA&ixlib=rb-4.0.3&q=80&w=1080",
-          "https://images.unsplash.com/photo-1650385114503-ab8a04090e6a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w2OTYwNzZ8MHwxfHNlYXJjaHwxNXx8U2FwcG9ybyUyMCUyMHxlbnwwfDB8fHwxNzM2ODY0MTIwfDA&ixlib=rb-4.0.3&q=80&w=1080",
-          "https://images.unsplash.com/photo-1528257861216-ccdaeb4e3f52?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w2OTYwNzZ8MHwxfHNlYXJjaHwxNnx8U2FwcG9ybyUyMCUyMHxlbnwwfDB8fHwxNzM2ODY0MTIwfDA&ixlib=rb-4.0.3&q=80&w=1080",
-          "https://images.unsplash.com/photo-1586404883382-7b1c58b4d59e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w2OTYwNzZ8MHwxfHNlYXJjaHwxN3x8U2FwcG9ybyUyMCUyMHxlbnwwfDB8fHwxNzM2ODY0MTIwfDA&ixlib=rb-4.0.3&q=80&w=1080",
-          "https://images.unsplash.com/photo-1700228675976-8bd9d90528ee?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w2OTYwNzZ8MHwxfHNlYXJjaHwxOHx8U2FwcG9ybyUyMCUyMHxlbnwwfDB8fHwxNzM2ODY0MTIwfDA&ixlib=rb-4.0.3&q=80&w=1080",
-          "https://images.unsplash.com/photo-1548860367-c5da2ecf8d1b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w2OTYwNzZ8MHwxfHNlYXJjaHwxOXx8U2FwcG9ybyUyMCUyMHxlbnwwfDB8fHwxNzM2ODY0MTIwfDA&ixlib=rb-4.0.3&q=80&w=1080",
-          "https://images.unsplash.com/photo-1574834856800-80a83663cd24?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w2OTYwNzZ8MHwxfHNlYXJjaHwyMHx8U2FwcG9ybyUyMCUyMHxlbnwwfDB8fHwxNzM2ODY0MTIwfDA&ixlib=rb-4.0.3&q=80&w=1080"
-        ]
-      },
-      {
-        "name": "Nagano  ",
-        "reasons": "Nagano is surrounded by stunning alpine scenery and offers numerous outdoor activities, such as hiking and skiing. Living in Nagano allows for a more tranquil lifestyle with close-knit community interactions. With a climate that presents four distinct seasons, this city caters to your preference for nature-focused living and provides exotic local flavors, especially in its renowned mountain cuisine.",
-        "images": [
-          "https://images.unsplash.com/photo-1614059236155-eb1a7523c1dc?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w2OTYwNzZ8MHwxfHNlYXJjaHwxfHxOYWdhbm8lMjAlMjB8ZW58MHwwfHx8MTczNjg2NDEyMHww&ixlib=rb-4.0.3&q=80&w=1080",
-          "https://images.unsplash.com/photo-1717325218360-c41843cd79c6?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w2OTYwNzZ8MHwxfHNlYXJjaHwyfHxOYWdhbm8lMjAlMjB8ZW58MHwwfHx8MTczNjg2NDEyMHww&ixlib=rb-4.0.3&q=80&w=1080",
-          "https://images.unsplash.com/photo-1572166365087-96ac83103260?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w2OTYwNzZ8MHwxfHNlYXJjaHwzfHxOYWdhbm8lMjAlMjB8ZW58MHwwfHx8MTczNjg2NDEyMHww&ixlib=rb-4.0.3&q=80&w=1080",
-          "https://images.unsplash.com/photo-1674393494307-4950ecbe6a31?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w2OTYwNzZ8MHwxfHNlYXJjaHw0fHxOYWdhbm8lMjAlMjB8ZW58MHwwfHx8MTczNjg2NDEyMHww&ixlib=rb-4.0.3&q=80&w=1080",
-          "https://images.unsplash.com/photo-1674393515427-526b3922a5ac?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w2OTYwNzZ8MHwxfHNlYXJjaHw1fHxOYWdhbm8lMjAlMjB8ZW58MHwwfHx8MTczNjg2NDEyMHww&ixlib=rb-4.0.3&q=80&w=1080",
-          "https://images.unsplash.com/photo-1674393494358-65315c599e9d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w2OTYwNzZ8MHwxfHNlYXJjaHw2fHxOYWdhbm8lMjAlMjB8ZW58MHwwfHx8MTczNjg2NDEyMHww&ixlib=rb-4.0.3&q=80&w=1080",
-          "https://images.unsplash.com/photo-1674393560955-fa2dc413fde0?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w2OTYwNzZ8MHwxfHNlYXJjaHw3fHxOYWdhbm8lMjAlMjB8ZW58MHwwfHx8MTczNjg2NDEyMHww&ixlib=rb-4.0.3&q=80&w=1080",
-          "https://images.unsplash.com/photo-1633259320039-a3974fefc105?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w2OTYwNzZ8MHwxfHNlYXJjaHw4fHxOYWdhbm8lMjAlMjB8ZW58MHwwfHx8MTczNjg2NDEyMHww&ixlib=rb-4.0.3&q=80&w=1080",
-          "https://images.unsplash.com/photo-1677030550750-b6ca3f969dee?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w2OTYwNzZ8MHwxfHNlYXJjaHw5fHxOYWdhbm8lMjAlMjB8ZW58MHwwfHx8MTczNjg2NDEyMHww&ixlib=rb-4.0.3&q=80&w=1080",
-          "https://images.unsplash.com/photo-1674393494303-42aba9694bf1?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w2OTYwNzZ8MHwxfHNlYXJjaHwxMHx8TmFnYW5vJTIwJTIwfGVufDB8MHx8fDE3MzY4NjQxMjB8MA&ixlib=rb-4.0.3&q=80&w=1080",
-          "https://images.unsplash.com/photo-1650892148507-67159952578a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w2OTYwNzZ8MHwxfHNlYXJjaHwxMXx8TmFnYW5vJTIwJTIwfGVufDB8MHx8fDE3MzY4NjQxMjB8MA&ixlib=rb-4.0.3&q=80&w=1080",
-          "https://images.unsplash.com/photo-1580475673599-d9b9946d0c0f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w2OTYwNzZ8MHwxfHNlYXJjaHwxMnx8TmFnYW5vJTIwJTIwfGVufDB8MHx8fDE3MzY4NjQxMjB8MA&ixlib=rb-4.0.3&q=80&w=1080",
-          "https://images.unsplash.com/photo-1580475673651-2a40cb046d3d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w2OTYwNzZ8MHwxfHNlYXJjaHwxM3x8TmFnYW5vJTIwJTIwfGVufDB8MHx8fDE3MzY4NjQxMjB8MA&ixlib=rb-4.0.3&q=80&w=1080",
-          "https://images.unsplash.com/photo-1732682275819-d9ab36a8375a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w2OTYwNzZ8MHwxfHNlYXJjaHwxNHx8TmFnYW5vJTIwJTIwfGVufDB8MHx8fDE3MzY4NjQxMjB8MA&ixlib=rb-4.0.3&q=80&w=1080",
-          "https://images.unsplash.com/photo-1705028572444-a411c7a9c8d1?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w2OTYwNzZ8MHwxfHNlYXJjaHwxNXx8TmFnYW5vJTIwJTIwfGVufDB8MHx8fDE3MzY4NjQxMjB8MA&ixlib=rb-4.0.3&q=80&w=1080",
-          "https://images.unsplash.com/photo-1499715008769-aa2cf0aaad5b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w2OTYwNzZ8MHwxfHNlYXJjaHwxNnx8TmFnYW5vJTIwJTIwfGVufDB8MHx8fDE3MzY4NjQxMjB8MA&ixlib=rb-4.0.3&q=80&w=1080",
-          "https://images.unsplash.com/photo-1686530577072-1961ce4ae4a7?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w2OTYwNzZ8MHwxfHNlYXJjaHwxN3x8TmFnYW5vJTIwJTIwfGVufDB8MHx8fDE3MzY4NjQxMjB8MA&ixlib=rb-4.0.3&q=80&w=1080",
-          "https://images.unsplash.com/photo-1716719924772-aac80d7c14e0?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w2OTYwNzZ8MHwxfHNlYXJjaHwxOHx8TmFnYW5vJTIwJTIwfGVufDB8MHx8fDE3MzY4NjQxMjB8MA&ixlib=rb-4.0.3&q=80&w=1080",
-          "https://images.unsplash.com/photo-1633259305571-aed2f2f20f88?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w2OTYwNzZ8MHwxfHNlYXJjaHwxOXx8TmFnYW5vJTIwJTIwfGVufDB8MHx8fDE3MzY4NjQxMjB8MA&ixlib=rb-4.0.3&q=80&w=1080",
-          "https://images.unsplash.com/photo-1732682275753-c3d3b98b0896?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w2OTYwNzZ8MHwxfHNlYXJjaHwyMHx8TmFnYW5vJTIwJTIwfGVufDB8MHx8fDE3MzY4NjQxMjB8MA&ixlib=rb-4.0.3&q=80&w=1080"
-        ]
-      },
-      {
-        "name": "Prague (Czech Republic)  ",
-        "reasons": "Prague is a captivating city that combines historical beauty with modern conveniences, showcasing striking scenery and a rich cultural life. Although it may be a challenging relocation due to a different language and culture, it offers an adventurous lifestyle experience with its vibrant food scene featuring both traditional and innovative cuisines. The presence of numerous parks and a charming suburban feel can fulfill your desire for nature and community interactions while enjoying a unique European lifestyle.",
-        "images": [
-          "https://images.unsplash.com/photo-1594492256402-1463c14e0317?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w2OTYwNzZ8MHwxfHNlYXJjaHwxfHxQcmFndWUlMjAlMjhDemVjaCUyMFJlcHVibGljJTI5JTIwJTIwfGVufDB8MHx8fDE3MzY4NjQxMjB8MA&ixlib=rb-4.0.3&q=80&w=1080",
-          "https://images.unsplash.com/photo-1550776933-f4da8cc8a099?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w2OTYwNzZ8MHwxfHNlYXJjaHwyfHxQcmFndWUlMjAlMjhDemVjaCUyMFJlcHVibGljJTI5JTIwJTIwfGVufDB8MHx8fDE3MzY4NjQxMjB8MA&ixlib=rb-4.0.3&q=80&w=1080",
-          "https://images.unsplash.com/photo-1565555303481-539930cc8368?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w2OTYwNzZ8MHwxfHNlYXJjaHwzfHxQcmFndWUlMjAlMjhDemVjaCUyMFJlcHVibGljJTI5JTIwJTIwfGVufDB8MHx8fDE3MzY4NjQxMjB8MA&ixlib=rb-4.0.3&q=80&w=1080",
-          "https://images.unsplash.com/photo-1565555235619-453821013079?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w2OTYwNzZ8MHwxfHNlYXJjaHw0fHxQcmFndWUlMjAlMjhDemVjaCUyMFJlcHVibGljJTI5JTIwJTIwfGVufDB8MHx8fDE3MzY4NjQxMjB8MA&ixlib=rb-4.0.3&q=80&w=1080",
-          "https://images.unsplash.com/photo-1458150945447-7fb764c11a92?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w2OTYwNzZ8MHwxfHNlYXJjaHw1fHxQcmFndWUlMjAlMjhDemVjaCUyMFJlcHVibGljJTI5JTIwJTIwfGVufDB8MHx8fDE3MzY4NjQxMjB8MA&ixlib=rb-4.0.3&q=80&w=1080",
-          "https://images.unsplash.com/photo-1509322479815-6b85f2442ff0?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w2OTYwNzZ8MHwxfHNlYXJjaHw2fHxQcmFndWUlMjAlMjhDemVjaCUyMFJlcHVibGljJTI5JTIwJTIwfGVufDB8MHx8fDE3MzY4NjQxMjB8MA&ixlib=rb-4.0.3&q=80&w=1080",
-          "https://images.unsplash.com/photo-1578602525842-2cffe3fc76ea?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w2OTYwNzZ8MHwxfHNlYXJjaHw3fHxQcmFndWUlMjAlMjhDemVjaCUyMFJlcHVibGljJTI5JTIwJTIwfGVufDB8MHx8fDE3MzY4NjQxMjB8MA&ixlib=rb-4.0.3&q=80&w=1080",
-          "https://images.unsplash.com/photo-1581686041603-f581e6890b65?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w2OTYwNzZ8MHwxfHNlYXJjaHw4fHxQcmFndWUlMjAlMjhDemVjaCUyMFJlcHVibGljJTI5JTIwJTIwfGVufDB8MHx8fDE3MzY4NjQxMjB8MA&ixlib=rb-4.0.3&q=80&w=1080",
-          "https://images.unsplash.com/photo-1578602735699-712fb4531024?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w2OTYwNzZ8MHwxfHNlYXJjaHw5fHxQcmFndWUlMjAlMjhDemVjaCUyMFJlcHVibGljJTI5JTIwJTIwfGVufDB8MHx8fDE3MzY4NjQxMjB8MA&ixlib=rb-4.0.3&q=80&w=1080",
-          "https://images.unsplash.com/photo-1509321395964-9173e84ffe76?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w2OTYwNzZ8MHwxfHNlYXJjaHwxMHx8UHJhZ3VlJTIwJTI4Q3plY2glMjBSZXB1YmxpYyUyOSUyMCUyMHxlbnwwfDB8fHwxNzM2ODY0MTIwfDA&ixlib=rb-4.0.3&q=80&w=1080",
-          "https://images.unsplash.com/photo-1578602782630-78bd6d22edee?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w2OTYwNzZ8MHwxfHNlYXJjaHwxMXx8UHJhZ3VlJTIwJTI4Q3plY2glMjBSZXB1YmxpYyUyOSUyMCUyMHxlbnwwfDB8fHwxNzM2ODY0MTIwfDA&ixlib=rb-4.0.3&q=80&w=1080",
-          "https://images.unsplash.com/photo-1550776933-043772e7fc72?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w2OTYwNzZ8MHwxfHNlYXJjaHwxMnx8UHJhZ3VlJTIwJTI4Q3plY2glMjBSZXB1YmxpYyUyOSUyMCUyMHxlbnwwfDB8fHwxNzM2ODY0MTIwfDA&ixlib=rb-4.0.3&q=80&w=1080",
-          "https://images.unsplash.com/photo-1550776714-be5f30170236?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w2OTYwNzZ8MHwxfHNlYXJjaHwxM3x8UHJhZ3VlJTIwJTI4Q3plY2glMjBSZXB1YmxpYyUyOSUyMCUyMHxlbnwwfDB8fHwxNzM2ODY0MTIwfDA&ixlib=rb-4.0.3&q=80&w=1080",
-          "https://images.unsplash.com/photo-1550776713-e562db9788d0?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w2OTYwNzZ8MHwxfHNlYXJjaHwxNHx8UHJhZ3VlJTIwJTI4Q3plY2glMjBSZXB1YmxpYyUyOSUyMCUyMHxlbnwwfDB8fHwxNzM2ODY0MTIwfDA&ixlib=rb-4.0.3&q=80&w=1080",
-          "https://images.unsplash.com/photo-1634842544343-006ddb7bae94?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w2OTYwNzZ8MHwxfHNlYXJjaHwxNXx8UHJhZ3VlJTIwJTI4Q3plY2glMjBSZXB1YmxpYyUyOSUyMCUyMHxlbnwwfDB8fHwxNzM2ODY0MTIwfDA&ixlib=rb-4.0.3&q=80&w=1080",
-          "https://images.unsplash.com/photo-1634855654601-aa2b499281a9?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w2OTYwNzZ8MHwxfHNlYXJjaHwxNnx8UHJhZ3VlJTIwJTI4Q3plY2glMjBSZXB1YmxpYyUyOSUyMCUyMHxlbnwwfDB8fHwxNzM2ODY0MTIwfDA&ixlib=rb-4.0.3&q=80&w=1080",
-          "https://images.unsplash.com/photo-1634855654632-420b641a7a69?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w2OTYwNzZ8MHwxfHNlYXJjaHwxN3x8UHJhZ3VlJTIwJTI4Q3plY2glMjBSZXB1YmxpYyUyOSUyMCUyMHxlbnwwfDB8fHwxNzM2ODY0MTIwfDA&ixlib=rb-4.0.3&q=80&w=1080",
-          "https://images.unsplash.com/photo-1634855657368-53e15ca91bf1?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w2OTYwNzZ8MHwxfHNlYXJjaHwxOHx8UHJhZ3VlJTIwJTI4Q3plY2glMjBSZXB1YmxpYyUyOSUyMCUyMHxlbnwwfDB8fHwxNzM2ODY0MTIwfDA&ixlib=rb-4.0.3&q=80&w=1080",
-          "https://images.unsplash.com/photo-1634842544412-5e00dd991b70?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w2OTYwNzZ8MHwxfHNlYXJjaHwxOXx8UHJhZ3VlJTIwJTI4Q3plY2glMjBSZXB1YmxpYyUyOSUyMCUyMHxlbnwwfDB8fHwxNzM2ODY0MTIwfDA&ixlib=rb-4.0.3&q=80&w=1080",
-          "https://images.unsplash.com/photo-1634855655651-d1a64421360a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w2OTYwNzZ8MHwxfHNlYXJjaHwyMHx8UHJhZ3VlJTIwJTI4Q3plY2glMjBSZXB1YmxpYyUyOSUyMCUyMHxlbnwwfDB8fHwxNzM2ODY0MTIwfDA&ixlib=rb-4.0.3&q=80&w=1080"
-        ]
-      },
-      {
-        "name": "Sapporo  ",
-        "reasons": "Sapporo offers a blend of urban conveniences and access to nature, featuring beautiful parks and mountainous surroundings perfect for relaxation. The city experiences all four distinct seasons, making it ideal for someone seeking seasonal diversity. Moreover, Sapporo is known for its unique food culture, including famous ramen and seafood dishes, aligning with your adventurous palate while still providing a suburban, quiet atmosphere.",
-        "images": [
-          "https://images.unsplash.com/photo-1514186077719-5f31a164c12e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w2OTYwNzZ8MHwxfHNlYXJjaHwxfHxTYXBwb3JvJTIwJTIwfGVufDB8MHx8fDE3MzY4NjQxMjB8MA&ixlib=rb-4.0.3&q=80&w=1080",
-          "https://images.unsplash.com/photo-1656404113186-ee31a6ee8e65?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w2OTYwNzZ8MHwxfHNlYXJjaHwyfHxTYXBwb3JvJTIwJTIwfGVufDB8MHx8fDE3MzY4NjQxMjB8MA&ixlib=rb-4.0.3&q=80&w=1080",
-          "https://images.unsplash.com/photo-1598176762419-7abc6840533a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w2OTYwNzZ8MHwxfHNlYXJjaHwzfHxTYXBwb3JvJTIwJTIwfGVufDB8MHx8fDE3MzY4NjQxMjB8MA&ixlib=rb-4.0.3&q=80&w=1080",
-          "https://images.unsplash.com/photo-1710691191549-1e3e67036fdd?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w2OTYwNzZ8MHwxfHNlYXJjaHw0fHxTYXBwb3JvJTIwJTIwfGVufDB8MHx8fDE3MzY4NjQxMjB8MA&ixlib=rb-4.0.3&q=80&w=1080",
-          "https://images.unsplash.com/photo-1696053066632-3ef25f7bb0eb?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w2OTYwNzZ8MHwxfHNlYXJjaHw1fHxTYXBwb3JvJTIwJTIwfGVufDB8MHx8fDE3MzY4NjQxMjB8MA&ixlib=rb-4.0.3&q=80&w=1080",
-          "https://images.unsplash.com/photo-1707745957273-095f00615590?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w2OTYwNzZ8MHwxfHNlYXJjaHw2fHxTYXBwb3JvJTIwJTIwfGVufDB8MHx8fDE3MzY4NjQxMjB8MA&ixlib=rb-4.0.3&q=80&w=1080",
-          "https://images.unsplash.com/photo-1707745507046-2d3eea777837?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w2OTYwNzZ8MHwxfHNlYXJjaHw3fHxTYXBwb3JvJTIwJTIwfGVufDB8MHx8fDE3MzY4NjQxMjB8MA&ixlib=rb-4.0.3&q=80&w=1080",
-          "https://images.unsplash.com/photo-1645611034528-437acf187829?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w2OTYwNzZ8MHwxfHNlYXJjaHw4fHxTYXBwb3JvJTIwJTIwfGVufDB8MHx8fDE3MzY4NjQxMjB8MA&ixlib=rb-4.0.3&q=80&w=1080",
-          "https://images.unsplash.com/photo-1574835154663-3d11951f9b67?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w2OTYwNzZ8MHwxfHNlYXJjaHw5fHxTYXBwb3JvJTIwJTIwfGVufDB8MHx8fDE3MzY4NjQxMjB8MA&ixlib=rb-4.0.3&q=80&w=1080",
-          "https://images.unsplash.com/photo-1693974677145-80fac5b696ac?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w2OTYwNzZ8MHwxfHNlYXJjaHwxMHx8U2FwcG9ybyUyMCUyMHxlbnwwfDB8fHwxNzM2ODY0MTIwfDA&ixlib=rb-4.0.3&q=80&w=1080",
-          "https://images.unsplash.com/photo-1693975045908-1b4d44cfbf97?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w2OTYwNzZ8MHwxfHNlYXJjaHwxMXx8U2FwcG9ybyUyMCUyMHxlbnwwfDB8fHwxNzM2ODY0MTIwfDA&ixlib=rb-4.0.3&q=80&w=1080",
-          "https://images.unsplash.com/photo-1488273478515-f13bd0b73037?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w2OTYwNzZ8MHwxfHNlYXJjaHwxMnx8U2FwcG9ybyUyMCUyMHxlbnwwfDB8fHwxNzM2ODY0MTIwfDA&ixlib=rb-4.0.3&q=80&w=1080",
-          "https://images.unsplash.com/photo-1519105467443-4779d0fb729d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w2OTYwNzZ8MHwxfHNlYXJjaHwxM3x8U2FwcG9ybyUyMCUyMHxlbnwwfDB8fHwxNzM2ODY0MTIwfDA&ixlib=rb-4.0.3&q=80&w=1080",
-          "https://images.unsplash.com/photo-1709459991438-fabb89f2873c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w2OTYwNzZ8MHwxfHNlYXJjaHwxNHx8U2FwcG9ybyUyMCUyMHxlbnwwfDB8fHwxNzM2ODY0MTIwfDA&ixlib=rb-4.0.3&q=80&w=1080",
-          "https://images.unsplash.com/photo-1650385114503-ab8a04090e6a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w2OTYwNzZ8MHwxfHNlYXJjaHwxNXx8U2FwcG9ybyUyMCUyMHxlbnwwfDB8fHwxNzM2ODY0MTIwfDA&ixlib=rb-4.0.3&q=80&w=1080",
-          "https://images.unsplash.com/photo-1528257861216-ccdaeb4e3f52?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w2OTYwNzZ8MHwxfHNlYXJjaHwxNnx8U2FwcG9ybyUyMCUyMHxlbnwwfDB8fHwxNzM2ODY0MTIwfDA&ixlib=rb-4.0.3&q=80&w=1080",
-          "https://images.unsplash.com/photo-1586404883382-7b1c58b4d59e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w2OTYwNzZ8MHwxfHNlYXJjaHwxN3x8U2FwcG9ybyUyMCUyMHxlbnwwfDB8fHwxNzM2ODY0MTIwfDA&ixlib=rb-4.0.3&q=80&w=1080",
-          "https://images.unsplash.com/photo-1700228675976-8bd9d90528ee?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w2OTYwNzZ8MHwxfHNlYXJjaHwxOHx8U2FwcG9ybyUyMCUyMHxlbnwwfDB8fHwxNzM2ODY0MTIwfDA&ixlib=rb-4.0.3&q=80&w=1080",
-          "https://images.unsplash.com/photo-1548860367-c5da2ecf8d1b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w2OTYwNzZ8MHwxfHNlYXJjaHwxOXx8U2FwcG9ybyUyMCUyMHxlbnwwfDB8fHwxNzM2ODY0MTIwfDA&ixlib=rb-4.0.3&q=80&w=1080",
-          "https://images.unsplash.com/photo-1574834856800-80a83663cd24?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w2OTYwNzZ8MHwxfHNlYXJjaHwyMHx8U2FwcG9ybyUyMCUyMHxlbnwwfDB8fHwxNzM2ODY0MTIwfDA&ixlib=rb-4.0.3&q=80&w=1080"
-        ]
-      },
-      {
-        "name": "Nagano  ",
-        "reasons": "Nagano is surrounded by stunning alpine scenery and offers numerous outdoor activities, such as hiking and skiing. Living in Nagano allows for a more tranquil lifestyle with close-knit community interactions. With a climate that presents four distinct seasons, this city caters to your preference for nature-focused living and provides exotic local flavors, especially in its renowned mountain cuisine.",
-        "images": [
-          "https://images.unsplash.com/photo-1614059236155-eb1a7523c1dc?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w2OTYwNzZ8MHwxfHNlYXJjaHwxfHxOYWdhbm8lMjAlMjB8ZW58MHwwfHx8MTczNjg2NDEyMHww&ixlib=rb-4.0.3&q=80&w=1080",
-          "https://images.unsplash.com/photo-1717325218360-c41843cd79c6?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w2OTYwNzZ8MHwxfHNlYXJjaHwyfHxOYWdhbm8lMjAlMjB8ZW58MHwwfHx8MTczNjg2NDEyMHww&ixlib=rb-4.0.3&q=80&w=1080",
-          "https://images.unsplash.com/photo-1572166365087-96ac83103260?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w2OTYwNzZ8MHwxfHNlYXJjaHwzfHxOYWdhbm8lMjAlMjB8ZW58MHwwfHx8MTczNjg2NDEyMHww&ixlib=rb-4.0.3&q=80&w=1080",
-          "https://images.unsplash.com/photo-1674393494307-4950ecbe6a31?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w2OTYwNzZ8MHwxfHNlYXJjaHw0fHxOYWdhbm8lMjAlMjB8ZW58MHwwfHx8MTczNjg2NDEyMHww&ixlib=rb-4.0.3&q=80&w=1080",
-          "https://images.unsplash.com/photo-1674393515427-526b3922a5ac?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w2OTYwNzZ8MHwxfHNlYXJjaHw1fHxOYWdhbm8lMjAlMjB8ZW58MHwwfHx8MTczNjg2NDEyMHww&ixlib=rb-4.0.3&q=80&w=1080",
-          "https://images.unsplash.com/photo-1674393494358-65315c599e9d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w2OTYwNzZ8MHwxfHNlYXJjaHw2fHxOYWdhbm8lMjAlMjB8ZW58MHwwfHx8MTczNjg2NDEyMHww&ixlib=rb-4.0.3&q=80&w=1080",
-          "https://images.unsplash.com/photo-1674393560955-fa2dc413fde0?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w2OTYwNzZ8MHwxfHNlYXJjaHw3fHxOYWdhbm8lMjAlMjB8ZW58MHwwfHx8MTczNjg2NDEyMHww&ixlib=rb-4.0.3&q=80&w=1080",
-          "https://images.unsplash.com/photo-1633259320039-a3974fefc105?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w2OTYwNzZ8MHwxfHNlYXJjaHw4fHxOYWdhbm8lMjAlMjB8ZW58MHwwfHx8MTczNjg2NDEyMHww&ixlib=rb-4.0.3&q=80&w=1080",
-          "https://images.unsplash.com/photo-1677030550750-b6ca3f969dee?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w2OTYwNzZ8MHwxfHNlYXJjaHw5fHxOYWdhbm8lMjAlMjB8ZW58MHwwfHx8MTczNjg2NDEyMHww&ixlib=rb-4.0.3&q=80&w=1080",
-          "https://images.unsplash.com/photo-1674393494303-42aba9694bf1?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w2OTYwNzZ8MHwxfHNlYXJjaHwxMHx8TmFnYW5vJTIwJTIwfGVufDB8MHx8fDE3MzY4NjQxMjB8MA&ixlib=rb-4.0.3&q=80&w=1080",
-          "https://images.unsplash.com/photo-1650892148507-67159952578a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w2OTYwNzZ8MHwxfHNlYXJjaHwxMXx8TmFnYW5vJTIwJTIwfGVufDB8MHx8fDE3MzY4NjQxMjB8MA&ixlib=rb-4.0.3&q=80&w=1080",
-          "https://images.unsplash.com/photo-1580475673599-d9b9946d0c0f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w2OTYwNzZ8MHwxfHNlYXJjaHwxMnx8TmFnYW5vJTIwJTIwfGVufDB8MHx8fDE3MzY4NjQxMjB8MA&ixlib=rb-4.0.3&q=80&w=1080",
-          "https://images.unsplash.com/photo-1580475673651-2a40cb046d3d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w2OTYwNzZ8MHwxfHNlYXJjaHwxM3x8TmFnYW5vJTIwJTIwfGVufDB8MHx8fDE3MzY4NjQxMjB8MA&ixlib=rb-4.0.3&q=80&w=1080",
-          "https://images.unsplash.com/photo-1732682275819-d9ab36a8375a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w2OTYwNzZ8MHwxfHNlYXJjaHwxNHx8TmFnYW5vJTIwJTIwfGVufDB8MHx8fDE3MzY4NjQxMjB8MA&ixlib=rb-4.0.3&q=80&w=1080",
-          "https://images.unsplash.com/photo-1705028572444-a411c7a9c8d1?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w2OTYwNzZ8MHwxfHNlYXJjaHwxNXx8TmFnYW5vJTIwJTIwfGVufDB8MHx8fDE3MzY4NjQxMjB8MA&ixlib=rb-4.0.3&q=80&w=1080",
-          "https://images.unsplash.com/photo-1499715008769-aa2cf0aaad5b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w2OTYwNzZ8MHwxfHNlYXJjaHwxNnx8TmFnYW5vJTIwJTIwfGVufDB8MHx8fDE3MzY4NjQxMjB8MA&ixlib=rb-4.0.3&q=80&w=1080",
-          "https://images.unsplash.com/photo-1686530577072-1961ce4ae4a7?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w2OTYwNzZ8MHwxfHNlYXJjaHwxN3x8TmFnYW5vJTIwJTIwfGVufDB8MHx8fDE3MzY4NjQxMjB8MA&ixlib=rb-4.0.3&q=80&w=1080",
-          "https://images.unsplash.com/photo-1716719924772-aac80d7c14e0?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w2OTYwNzZ8MHwxfHNlYXJjaHwxOHx8TmFnYW5vJTIwJTIwfGVufDB8MHx8fDE3MzY4NjQxMjB8MA&ixlib=rb-4.0.3&q=80&w=1080",
-          "https://images.unsplash.com/photo-1633259305571-aed2f2f20f88?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w2OTYwNzZ8MHwxfHNlYXJjaHwxOXx8TmFnYW5vJTIwJTIwfGVufDB8MHx8fDE3MzY4NjQxMjB8MA&ixlib=rb-4.0.3&q=80&w=1080",
-          "https://images.unsplash.com/photo-1732682275753-c3d3b98b0896?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w2OTYwNzZ8MHwxfHNlYXJjaHwyMHx8TmFnYW5vJTIwJTIwfGVufDB8MHx8fDE3MzY4NjQxMjB8MA&ixlib=rb-4.0.3&q=80&w=1080"
-        ]
-      },
-      {
-        "name": "Prague (Czech Republic)  ",
-        "reasons": "Prague is a captivating city that combines historical beauty with modern conveniences, showcasing striking scenery and a rich cultural life. Although it may be a challenging relocation due to a different language and culture, it offers an adventurous lifestyle experience with its vibrant food scene featuring both traditional and innovative cuisines. The presence of numerous parks and a charming suburban feel can fulfill your desire for nature and community interactions while enjoying a unique European lifestyle.",
-        "images": [
-          "https://images.unsplash.com/photo-1594492256402-1463c14e0317?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w2OTYwNzZ8MHwxfHNlYXJjaHwxfHxQcmFndWUlMjAlMjhDemVjaCUyMFJlcHVibGljJTI5JTIwJTIwfGVufDB8MHx8fDE3MzY4NjQxMjB8MA&ixlib=rb-4.0.3&q=80&w=1080",
-          "https://images.unsplash.com/photo-1550776933-f4da8cc8a099?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w2OTYwNzZ8MHwxfHNlYXJjaHwyfHxQcmFndWUlMjAlMjhDemVjaCUyMFJlcHVibGljJTI5JTIwJTIwfGVufDB8MHx8fDE3MzY4NjQxMjB8MA&ixlib=rb-4.0.3&q=80&w=1080",
-          "https://images.unsplash.com/photo-1565555303481-539930cc8368?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w2OTYwNzZ8MHwxfHNlYXJjaHwzfHxQcmFndWUlMjAlMjhDemVjaCUyMFJlcHVibGljJTI5JTIwJTIwfGVufDB8MHx8fDE3MzY4NjQxMjB8MA&ixlib=rb-4.0.3&q=80&w=1080",
-          "https://images.unsplash.com/photo-1565555235619-453821013079?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w2OTYwNzZ8MHwxfHNlYXJjaHw0fHxQcmFndWUlMjAlMjhDemVjaCUyMFJlcHVibGljJTI5JTIwJTIwfGVufDB8MHx8fDE3MzY4NjQxMjB8MA&ixlib=rb-4.0.3&q=80&w=1080",
-          "https://images.unsplash.com/photo-1458150945447-7fb764c11a92?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w2OTYwNzZ8MHwxfHNlYXJjaHw1fHxQcmFndWUlMjAlMjhDemVjaCUyMFJlcHVibGljJTI5JTIwJTIwfGVufDB8MHx8fDE3MzY4NjQxMjB8MA&ixlib=rb-4.0.3&q=80&w=1080",
-          "https://images.unsplash.com/photo-1509322479815-6b85f2442ff0?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w2OTYwNzZ8MHwxfHNlYXJjaHw2fHxQcmFndWUlMjAlMjhDemVjaCUyMFJlcHVibGljJTI5JTIwJTIwfGVufDB8MHx8fDE3MzY4NjQxMjB8MA&ixlib=rb-4.0.3&q=80&w=1080",
-          "https://images.unsplash.com/photo-1578602525842-2cffe3fc76ea?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w2OTYwNzZ8MHwxfHNlYXJjaHw3fHxQcmFndWUlMjAlMjhDemVjaCUyMFJlcHVibGljJTI5JTIwJTIwfGVufDB8MHx8fDE3MzY4NjQxMjB8MA&ixlib=rb-4.0.3&q=80&w=1080",
-          "https://images.unsplash.com/photo-1581686041603-f581e6890b65?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w2OTYwNzZ8MHwxfHNlYXJjaHw4fHxQcmFndWUlMjAlMjhDemVjaCUyMFJlcHVibGljJTI5JTIwJTIwfGVufDB8MHx8fDE3MzY4NjQxMjB8MA&ixlib=rb-4.0.3&q=80&w=1080",
-          "https://images.unsplash.com/photo-1578602735699-712fb4531024?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w2OTYwNzZ8MHwxfHNlYXJjaHw5fHxQcmFndWUlMjAlMjhDemVjaCUyMFJlcHVibGljJTI5JTIwJTIwfGVufDB8MHx8fDE3MzY4NjQxMjB8MA&ixlib=rb-4.0.3&q=80&w=1080",
-          "https://images.unsplash.com/photo-1509321395964-9173e84ffe76?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w2OTYwNzZ8MHwxfHNlYXJjaHwxMHx8UHJhZ3VlJTIwJTI4Q3plY2glMjBSZXB1YmxpYyUyOSUyMCUyMHxlbnwwfDB8fHwxNzM2ODY0MTIwfDA&ixlib=rb-4.0.3&q=80&w=1080",
-          "https://images.unsplash.com/photo-1578602782630-78bd6d22edee?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w2OTYwNzZ8MHwxfHNlYXJjaHwxMXx8UHJhZ3VlJTIwJTI4Q3plY2glMjBSZXB1YmxpYyUyOSUyMCUyMHxlbnwwfDB8fHwxNzM2ODY0MTIwfDA&ixlib=rb-4.0.3&q=80&w=1080",
-          "https://images.unsplash.com/photo-1550776933-043772e7fc72?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w2OTYwNzZ8MHwxfHNlYXJjaHwxMnx8UHJhZ3VlJTIwJTI4Q3plY2glMjBSZXB1YmxpYyUyOSUyMCUyMHxlbnwwfDB8fHwxNzM2ODY0MTIwfDA&ixlib=rb-4.0.3&q=80&w=1080",
-          "https://images.unsplash.com/photo-1550776714-be5f30170236?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w2OTYwNzZ8MHwxfHNlYXJjaHwxM3x8UHJhZ3VlJTIwJTI4Q3plY2glMjBSZXB1YmxpYyUyOSUyMCUyMHxlbnwwfDB8fHwxNzM2ODY0MTIwfDA&ixlib=rb-4.0.3&q=80&w=1080",
-          "https://images.unsplash.com/photo-1550776713-e562db9788d0?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w2OTYwNzZ8MHwxfHNlYXJjaHwxNHx8UHJhZ3VlJTIwJTI4Q3plY2glMjBSZXB1YmxpYyUyOSUyMCUyMHxlbnwwfDB8fHwxNzM2ODY0MTIwfDA&ixlib=rb-4.0.3&q=80&w=1080",
-          "https://images.unsplash.com/photo-1634842544343-006ddb7bae94?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w2OTYwNzZ8MHwxfHNlYXJjaHwxNXx8UHJhZ3VlJTIwJTI4Q3plY2glMjBSZXB1YmxpYyUyOSUyMCUyMHxlbnwwfDB8fHwxNzM2ODY0MTIwfDA&ixlib=rb-4.0.3&q=80&w=1080",
-          "https://images.unsplash.com/photo-1634855654601-aa2b499281a9?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w2OTYwNzZ8MHwxfHNlYXJjaHwxNnx8UHJhZ3VlJTIwJTI4Q3plY2glMjBSZXB1YmxpYyUyOSUyMCUyMHxlbnwwfDB8fHwxNzM2ODY0MTIwfDA&ixlib=rb-4.0.3&q=80&w=1080",
-          "https://images.unsplash.com/photo-1634855654632-420b641a7a69?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w2OTYwNzZ8MHwxfHNlYXJjaHwxN3x8UHJhZ3VlJTIwJTI4Q3plY2glMjBSZXB1YmxpYyUyOSUyMCUyMHxlbnwwfDB8fHwxNzM2ODY0MTIwfDA&ixlib=rb-4.0.3&q=80&w=1080",
-          "https://images.unsplash.com/photo-1634855657368-53e15ca91bf1?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w2OTYwNzZ8MHwxfHNlYXJjaHwxOHx8UHJhZ3VlJTIwJTI4Q3plY2glMjBSZXB1YmxpYyUyOSUyMCUyMHxlbnwwfDB8fHwxNzM2ODY0MTIwfDA&ixlib=rb-4.0.3&q=80&w=1080",
-          "https://images.unsplash.com/photo-1634842544412-5e00dd991b70?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w2OTYwNzZ8MHwxfHNlYXJjaHwxOXx8UHJhZ3VlJTIwJTI4Q3plY2glMjBSZXB1YmxpYyUyOSUyMCUyMHxlbnwwfDB8fHwxNzM2ODY0MTIwfDA&ixlib=rb-4.0.3&q=80&w=1080",
-          "https://images.unsplash.com/photo-1634855655651-d1a64421360a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w2OTYwNzZ8MHwxfHNlYXJjaHwyMHx8UHJhZ3VlJTIwJTI4Q3plY2glMjBSZXB1YmxpYyUyOSUyMCUyMHxlbnwwfDB8fHwxNzM2ODY0MTIwfDA&ixlib=rb-4.0.3&q=80&w=1080"
-        ]
-      }
-    ]
-  );
+  const [recommendations, setRecommendations] = useState<RecommendationsCity[]>([]);
+  const [moreRecommendationIndex, setMoreRecommendationIndex] = useState(0);
 
   const stepCurrentLocation = () => {
     setTimeout(() => {
@@ -212,10 +55,11 @@ export default function Page() {
       backgroundImage: `url('./bg.jpg')`,
       backgroundSize: 'cover',
       backgroundPosition: 'center',
+      backgroundAttachment: 'fixed',
     }}
   >
     <div
-      className={`bg-white bg-opacity-80 h-screen w-full flex items-start justify-center`}
+      className={`bg-white h-screen overflow-auto w-full flex items-start justify-center duration-[600ms] ${step === 14 ? "bg-opacity-90" : "bg-opacity-80"}`}
       >
       {step < 13 && (
         <div className={`p-4 w-[490px] duration-[600ms] ${step === 0 ? "pt-32" : "pt-8"}`}>
@@ -259,11 +103,9 @@ export default function Page() {
                 <div className='flex flex-col mb-6'>
                   <div className='mb-4'>
                     <label className='text-md font-bold mb-2'>Country</label>
-                    <input
-                      type="text"
-                      className="border border-gray-300 rounded p-2 w-full"
-                      placeholder="e.g., United States"
-                      onChange={(e) => setPostRecommendationsData({ ...postRecommendationsData, country: e.target.value })}
+                    <CountryInput
+                      postRecommendationsData={postRecommendationsData}
+                      setPostRecommendationsData={setPostRecommendationsData}
                     />
                   </div>
                   <div className='mb-4'>
@@ -347,7 +189,13 @@ export default function Page() {
                     {recommendation.reasons}
                   </p>
                   <div className="text-right">
-                    <a href="#" className="text-white text-sm font-bold p-2 px-4 rounded-full bg-gradient-to-r from-green-400 to-blue-500 hover:from-green-500 hover:to-blue-600">
+                    <a
+                      className="text-white text-sm font-bold p-2 px-4 rounded-full bg-gradient-to-r from-green-400 to-blue-500 hover:from-green-500 hover:to-blue-600 cursor-pointer"
+                      onClick={() => {
+                        setMoreRecommendationIndex(index);
+                        setStep(14);
+                      }}
+                    >
                       Read more
                       <svg className="rtl:rotate-180 w-3.5 h-3.5 ms-2 inline-block" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 10">
                         <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M1 5h12m0 0L9 1m4 4L9 9" />
@@ -359,6 +207,67 @@ export default function Page() {
             ))}
           </div>
         </div>
+      )}
+      {step === 14 && (
+        <div className='w-full md:max-w-6xl p-4 pt-8'>
+          <div
+            className='flex items-center justify-between mb-4'
+          >
+            <div className='flex items-center'>
+              <button
+                className='hover:bg-gray-100 p-2 rounded-full mr-2'
+                onClick={() => setStep(13)}
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#000000"><path d="m313-440 224 224-57 56-320-320 320-320 57 56-224 224h487v80H313Z"/></svg>
+              </button>
+              <h2
+                className='text-4xl font-bold'
+              >{recommendations[moreRecommendationIndex].name}</h2>
+            </div>
+            <div className='flex items-center'>
+              <button
+                className='text-gray-500 hover:text-gray-800 flex items-center'
+                onClick={() => {
+                  window.open(`https://www.google.com/maps/place/${recommendations[moreRecommendationIndex].name}`);
+                }}
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#5f6368"><path d="m600-120-240-84-186 72q-20 8-37-4.5T120-170v-560q0-13 7.5-23t20.5-15l212-72 240 84 186-72q20-8 37 4.5t17 33.5v560q0 13-7.5 23T812-192l-212 72Zm-40-98v-468l-160-56v468l160 56Zm80 0 120-40v-474l-120 46v468Zm-440-10 120-46v-468l-120 40v474Zm440-458v468-468Zm-320-56v468-468Z"/></svg>
+                <span className='ml-1'>Google Maps</span>
+              </button>
+              <span className='px-4'> | </span>
+              <button
+                className='text-gray-500 hover:text-gray-800 flex items-center'
+                onClick={() => {
+                  window.open(`https://en.wikipedia.org/wiki/${recommendations[moreRecommendationIndex].name}`);
+                }}
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#5f6368"><path d="M480-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q146 0 255.5 91.5T872-559h-82q-19-73-68.5-130.5T600-776v16q0 33-23.5 56.5T520-680h-80v80q0 17-11.5 28.5T400-560h-80v80h80v120h-40L168-552q-3 18-5.5 36t-2.5 36q0 131 92 225t228 95v80Zm364-20L716-228q-21 12-45 20t-51 8q-75 0-127.5-52.5T440-380q0-75 52.5-127.5T620-560q75 0 127.5 52.5T800-380q0 27-8 51t-20 45l128 128-56 56ZM620-280q42 0 71-29t29-71q0-42-29-71t-71-29q-42 0-71 29t-29 71q0 42 29 71t71 29Z"/></svg>
+                <span className='ml-1'>Wikipedia</span>
+              </button>
+            </div>
+          </div>
+          <div className='mb-6 max-w-xl leading-8 ml-12'>
+            {recommendations[moreRecommendationIndex].reasons}
+          </div>
+          <div className="columns-2 md:columns-4 gap-8 space-y-8 ml-12">
+            {recommendations[moreRecommendationIndex].images.map((image, index) => (
+              <img
+                key={index}
+                className="border border-gray-200 rounded-lg shadow min-h-[60px]"
+                src={image}
+                alt=""
+              />
+            ))}
+          </div>
+        </div>
+      )}
+      {step >= 13 && (
+          <Button
+            label="Try Again"
+            addClass="fixed bottom-4 -right-8 pr-12"
+            onClick={() => {
+              setStep(0);
+            }} />
       )}
     </div>
   </div>
