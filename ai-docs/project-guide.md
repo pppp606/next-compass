@@ -107,7 +107,7 @@ The following is a list of tasks to be completed within the next 24 hours to adv
       - [ ] Fetch city list from the API.
         - Send a POST request to `https://countriesnow.space/api/v0.1/countries/cities` with `{"country":"United States"}`.
         - No keys required, so make the request directly from the frontend.
-    - [ ] Allow input for all 10 questions in a single screen, in sequence.
+    - [x] Allow input for all 10 questions in a single screen, in sequence.
   - [ ] Display Results
     - [ ] Show three cities in cards.
       - [ ] Display images, city name, and reasons.
@@ -130,7 +130,7 @@ The following is a list of tasks to be completed within the next 24 hours to adv
 
 #### **5. Deployment**
 1. **Deployment**
-   - [ ] Host on Vercel
-   - [ ] Set environment variables on Vercel
+   - [x] Host on Vercel
+   - [x] Set environment variables on Vercel
 
 ---
