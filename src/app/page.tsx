@@ -105,7 +105,7 @@ export default function Page() {
                     <label className='text-md font-bold mb-2'>Country</label>
                     <CountryInput
                       postRecommendationsData={postRecommendationsData}
-                      setPostRecommendationsData={setPostRecommendationsData}
+                      setPostRecommendationsDataAction={setPostRecommendationsData}
                     />
                   </div>
                   <div className='mb-4'>

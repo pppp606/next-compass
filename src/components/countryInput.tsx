@@ -9,9 +9,14 @@ const Select = dynamic(() => import('react-select'), {
   loading: () => <input type="text" className="border border-gray-300 rounded p-2 py-1.5 w-full" placeholder=""/>,
 })
 
+type SelectOption = {
+  value: string;
+  label: string;
+}
+
 interface Props {
   postRecommendationsData: PostRecommendationsData;
-  setPostRecommendationsData: (data: PostRecommendationsData) => void;
+  setPostRecommendationsDataAction: (data: PostRecommendationsData) => void;
 }
 
 const countries = [
@@ -267,16 +272,17 @@ const countries = [
 
 export const CountryInput: React.FC<Props> = ({
   postRecommendationsData,
-  setPostRecommendationsData,
+  setPostRecommendationsDataAction,
 }) => {
   return (
     <Select
       options={countries}
       value={countries.find((country) => country.value === postRecommendationsData.country)}
       onChange={(selectedOption) => {
-        setPostRecommendationsData({
+        const target = selectedOption as SelectOption;
+        setPostRecommendationsDataAction({
           ...postRecommendationsData,
-          country: selectedOption?.value || '',
+          country: target?.value || '',
         });
       }}
       filterOption={(option, rawInput) => {
