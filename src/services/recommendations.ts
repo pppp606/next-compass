@@ -2,12 +2,24 @@ import axios from 'axios';
 import OpenAI from "openai";
 import { questions } from '@/components/questions';
 
+type UnsplashResponseItem = {
+  created_at: string;
+  updated_at: string;
+  urls: {
+    full: string;
+    raw: string;
+    regular: string;
+    small: string;
+    thumb: string;
+  };
+};
+
 export async function getRecommendations(country: string, city: string, answers: string[]) {
   let prompt = `
 Based on the following answers, please suggest three potential relocation destinations. The suggestions should include:
 
-1. Two realistic relocation destinations **within the country where I currently reside**, based on the user's preferences and practical considerations.
-2. One **challenging relocation destination outside the user's current country**, which offers a unique lifestyle experience.
+1. Four realistic relocation destinations **within the country where I currently reside**, based on the user's preferences and practical considerations.
+2. Two **challenging relocation destination outside the user's current country**, which offers a unique lifestyle experience.
 
 For each destination, include:
 - The name of the destination (as a single city name, e.g., "Tokyo").
@@ -32,7 +44,16 @@ For each destination, include:
 2. Destination: <city_name_within_country>
   Reason: <reason_for_suggestion>
 
-3. Destination: <city_name_outside_country>(<country_name>)
+3. Destination: <city_name_within_country>
+  Reason: <reason_for_suggestion>
+
+4. Destination: <city_name_within_country>
+  Reason: <reason_for_suggestion>
+
+5. Destination: <city_name_outside_country>(<country_name>)
+  Reason: <reason_for_suggestion>
+
+6. Destination: <city_name_outside_country>(<country_name>)
   Reason: <reason_for_suggestion>`
 
   const openai = new OpenAI();
@@ -46,7 +67,7 @@ For each destination, include:
     ],
   });
 
-  return response.choices[0].message;
+  return response.choices[0].message.content;
 }
 
 export async function getImage(city: string, per_page: number = 20) {
@@ -59,5 +80,5 @@ export async function getImage(city: string, per_page: number = 20) {
     },
   });
 
-  return response.data.results.map((result: any) => result.urls.regular);
+  return response.data.results.map((result: UnsplashResponseItem) => result.urls.regular);
 }
