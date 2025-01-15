@@ -71,6 +71,7 @@ For each destination, include:
             content: prompt,
         },
     ],
+    temperature: 0.85,
   });
 
   return response.choices[0].message.content;

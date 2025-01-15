@@ -6,6 +6,8 @@ import { questions } from '@/components/questions';
 import { Button } from '@/components/button';
 import { RecommendationsCity } from '@/services/recommendations';
 import { CountryInput } from '@/components/countryInput';
+import { CityInput } from '@/components/cityInput';
+import { Weather } from '@/components/weather';
 import axios from 'axios';
 
 export type PostRecommendationsData = {
@@ -14,14 +16,16 @@ export type PostRecommendationsData = {
   answers: string[],
 };
 
+const defaultPostRecommendationsData: PostRecommendationsData = {
+  country: '',
+  city: '',
+  answers: [],
+};
+
 export default function Page() {
   const [iconMove, setIconMove] = React.useState(false);
-  const [step, setStep] = React.useState(1);
-  const [postRecommendationsData, setPostRecommendationsData] = useState<PostRecommendationsData>({
-    country: '',
-    city: '',
-    answers: [],
-  });
+  const [step, setStep] = React.useState(0);
+  const [postRecommendationsData, setPostRecommendationsData] = useState<PostRecommendationsData>(defaultPostRecommendationsData);
   const [recommendations, setRecommendations] = useState<RecommendationsCity[]>([]);
   const [moreRecommendationIndex, setMoreRecommendationIndex] = useState(0);
 
@@ -44,7 +48,7 @@ export default function Page() {
     nextStep();
     axios.post('/api/recommendations', postRecommendationsData).then((result) => {
       setRecommendations(result.data.recommendations);
-      setStep(13);
+      setStep(questions.length + 3);
     });
   };
 
@@ -59,11 +63,11 @@ export default function Page() {
     }}
   >
     <div
-      className={`bg-white h-screen overflow-auto w-full flex items-start justify-center duration-[600ms] ${step === 14 ? "bg-opacity-90" : "bg-opacity-80"}`}
+      className={`bg-white h-screen overflow-auto w-full flex items-start justify-center duration-[600ms] ${step === questions.length + 4 ? "bg-opacity-[0.94]" : "bg-opacity-80"}`}
       >
-      {step < 13 && (
+      {step < questions.length + 3 && (
         <div className={`p-4 w-[490px] duration-[600ms] ${step === 0 ? "pt-32" : "pt-8"}`}>
-          {step < 12 && (
+          {step < questions.length + 2 && (
             <div className={`flex items-center mb-6 duration-[250ms] ${step === 0 ? "opacity-100" : "opacity-0"}`}>
               <span
                 className={`text-3xl block px-4 duration-[1850ms] ${iconMove ? "ld ld-slide-rtl" : ""}`}
@@ -92,11 +96,14 @@ export default function Page() {
                 Find the perfect location for the life you want to live.
               </p>
               <div className="text-center">
-                <Button label="Let’s begin by answering 10 quick questions!" onClick={stepCurrentLocation} />
+                <Button
+                  label={`Let’s begin by answering ${questions.length} quick questions!`}
+                  onClick={stepCurrentLocation}
+                />
               </div>
             </>
           )}
-          {step >= 1 && step <= 11 && (
+          {step >= 1 && step <= questions.length + 1 && (
             <div className=''>
               <div className={`relative duration-[700ms] ${step === 1 ? "opacity-100 h-96" : "opacity-0 h-0"} transition-all`}>
                 <h2 className='text-2xl font-bold mb-6'>Where do you currently live? (Country/City)</h2>
@@ -110,11 +117,9 @@ export default function Page() {
                   </div>
                   <div className='mb-4'>
                     <label className='text-md font-bold mb-2'>City</label>
-                    <input
-                      type="text"
-                      className="border border-gray-300 rounded p-2 w-full"
-                      placeholder="e.g., New York"
-                      onChange={(e) => setPostRecommendationsData({ ...postRecommendationsData, city: e.target.value })}
+                    <CityInput
+                      postRecommendationsData={postRecommendationsData}
+                      setPostRecommendationsDataAction={setPostRecommendationsData}
                     />
                   </div>
                 </div>
@@ -143,7 +148,7 @@ export default function Page() {
                           answers[step - 2] = String.fromCharCode('a'.charCodeAt(0) + qIndex);
                           setPostRecommendationsData({ ...postRecommendationsData, answers });
 
-                          if (step === 11) {
+                          if (step === questions.length + 1) {
                             sendAnswers();
                           }
                           nextStep();
@@ -156,11 +161,11 @@ export default function Page() {
               ))}
             </div>
           )}
-          {step === 12 && (
+          {step === questions.length + 2 && (
             <div className={`flex items-center mb-6 justify-center pt-8`}>
               <span
                 className={`text-[256px] block px-4 ld ld-vortex`}
-                style={{ animationDuration: '4.5s' }}
+                style={{ animationDuration: '6.5s' }}
               >
                 🌎
               </span>
@@ -168,16 +173,16 @@ export default function Page() {
           )}
         </div>
       )}
-      {step === 13 && (
+      {step === questions.length + 3 && (
         <div className='w-full md:max-w-6xl p-4 pt-8'>
           <div className='grid grid-cols-1 md:grid-cols-3 gap-8'>
             {recommendations.map((recommendation, index) => (
               <div
-                className="bg-white border border-gray-200 rounded-lg shadow"
+                className="bg-white border border-gray-200 rounded-md shadow"
                 key={index}
               >
                 <img
-                  className="rounded-t-lg w-full object-cover h-[180px]"
+                  className="rounded-t-md w-full object-cover h-[180px]"
                   src={recommendation.images[0]}
                   alt=""
                 />
@@ -193,7 +198,7 @@ export default function Page() {
                       className="text-white text-sm font-bold p-2 px-4 rounded-full bg-gradient-to-r from-green-400 to-blue-500 hover:from-green-500 hover:to-blue-600 cursor-pointer"
                       onClick={() => {
                         setMoreRecommendationIndex(index);
-                        setStep(14);
+                        setStep(questions.length + 4);
                       }}
                     >
                       Read more
@@ -208,7 +213,7 @@ export default function Page() {
           </div>
         </div>
       )}
-      {step === 14 && (
+      {step === questions.length + 4 && (
         <div className='w-full md:max-w-6xl p-4 pt-8'>
           <div
             className='flex items-center justify-between mb-4'
@@ -216,7 +221,7 @@ export default function Page() {
             <div className='flex items-center'>
               <button
                 className='hover:bg-gray-100 p-2 rounded-full mr-2'
-                onClick={() => setStep(13)}
+                onClick={() => setStep(questions.length + 3)}
               >
                 <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#000000"><path d="m313-440 224 224-57 56-320-320 320-320 57 56-224 224h487v80H313Z"/></svg>
               </button>
@@ -246,28 +251,47 @@ export default function Page() {
               </button>
             </div>
           </div>
-          <div className='mb-6 max-w-xl leading-8 ml-12'>
-            {recommendations[moreRecommendationIndex].reasons}
+          <div className='flex items-start justify-between mb-6'>
+            <div className='max-w-xl leading-8 ml-12'>
+              {recommendations[moreRecommendationIndex].reasons}
+            </div>
+            <Weather
+              city={recommendations[moreRecommendationIndex].name}
+              userCountry={postRecommendationsData.country}
+            />
           </div>
-          <div className="columns-2 md:columns-4 gap-8 space-y-8 ml-12">
+          <div className="columns-2 md:columns-4 gap-4 space-y-4 ml-12">
             {recommendations[moreRecommendationIndex].images.map((image, index) => (
               <img
                 key={index}
-                className="border border-gray-200 rounded-lg shadow min-h-[60px]"
+                className="border border-gray-200 rounded-md shadow min-h-[60px]"
                 src={image}
                 alt=""
               />
             ))}
           </div>
+          <div className='flex items-center justify-center my-12'>
+            <Button
+              label="Search for Relocation Options"
+              addClass="text-xl"
+              onClick={() => {
+                window.open(`https://www.google.com/search?q=living+in+${recommendations[moreRecommendationIndex].name}+guide`);
+              }}
+            />
+          </div>
         </div>
       )}
-      {step >= 13 && (
-          <Button
-            label="Try Again"
-            addClass="fixed bottom-4 -right-8 pr-12"
-            onClick={() => {
-              setStep(0);
-            }} />
+
+      {step >= questions.length + 3 && (
+        <Button
+          label="Try Again"
+          addClass="fixed bottom-4 -right-8 pr-12 bg-white border border-gray-200 rounded-full shadow-md"
+          onClick={() => {
+            setIconMove(false);
+            setStep(0);
+            setPostRecommendationsData(defaultPostRecommendationsData);
+          }}
+        />
       )}
     </div>
   </div>

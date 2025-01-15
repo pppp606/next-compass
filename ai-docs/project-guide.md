@@ -101,10 +101,10 @@ The following is a list of tasks to be completed within the next 24 hours to adv
     - Service name: NextCompass
     - Service description: Discover Your Next Chapter. Find the perfect location for the life you want to live.
     - Start button: Let’s begin by answering 10 quick questions!
-  - [ ] Input
-    - [ ] After selecting a country, fetch and display a list of areas (states/regions) for that country using react-autosuggest.
+  - [x] Input
+    - [x] After selecting a country, fetch and display a list of areas (states/regions) for that country using react-autosuggest.
       - [x] Store country list as a JSON on the frontend.
-      - [ ] Fetch city list from the API.
+      - [x] Fetch city list from the API.
         - Send a POST request to `https://countriesnow.space/api/v0.1/countries/cities` with `{"country":"United States"}`.
         - No keys required, so make the request directly from the frontend.
     - [x] Allow input for all 10 questions in a single screen, in sequence.
