@@ -253,12 +253,16 @@ export default function Page() {
           </div>
           <div className='flex items-start justify-between mb-6'>
             <div className='max-w-xl leading-8 ml-12'>
-              {recommendations[moreRecommendationIndex].reasons}
+              <p className='mb-4'>{recommendations[moreRecommendationIndex].reasons}</p>
             </div>
-            <Weather
-              city={recommendations[moreRecommendationIndex].name}
-              userCountry={postRecommendationsData.country}
-            />
+            <div className="text-right text-[14px]">
+              <h3><span className='font-bold'>Monthly Rent</span><br />1-bedroom apartment (USD)</h3>
+              <p className='mb-4'>Center:{recommendations[moreRecommendationIndex].rent[0]} / Suburbs:{recommendations[moreRecommendationIndex].rent[1]}</p>
+              <Weather
+                city={recommendations[moreRecommendationIndex].name}
+                userCountry={postRecommendationsData.country}
+              />
+            </div>
           </div>
           <div className="columns-2 md:columns-4 gap-4 space-y-4 ml-12">
             {recommendations[moreRecommendationIndex].images.map((image, index) => (

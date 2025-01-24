@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getRecommendations, getImage, RecommendationsCity } from '@/services/recommendations';
+import { getRecommendations, getImage, RecommendationsCity, LlmResultJson } from '@/services/recommendations';
 
 export async function POST(request: NextRequest) {
   try {
@@ -15,17 +15,18 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Failed to generate recommendations' }, { status: 500 });
     }
 
-    const recommendationsCites: RecommendationsCity[] = recommendations.split('\n\n').map((recommendation: string) => {
-      const [city, reasons] = recommendation.split('\n');
+  const recommendationsCites: RecommendationsCity[] = JSON.parse(recommendations).map((recommendation: LlmResultJson, index:number) => {
       return {
-        name: city.split('Destination: ')[1].replace('*', ''),
-        reasons: reasons.split('Reason: ')[1],
+        name: (index < 4) ? recommendation.city.split('(')[0] : recommendation.city,
+        reasons: recommendation.reasons,
+        rent: recommendation.rent,
         images: [""],
       };
     });
 
     await Promise.all(recommendationsCites.map(async (recommendationsCity) => {
-      const images = await getImage(recommendationsCity.name);
+      const searchWord = recommendationsCity.name;
+      const images = await getImage(searchWord);
       recommendationsCity.images = images;
     }));
 

@@ -88,7 +88,7 @@ export const Weather: React.FC<Props> = ({
         </p>)
         : (
           <div>
-            <h3 className='text-sm text-bold text-right'>Today&apos;s Weather</h3>
+            <h3 className='text-sm font-bold text-right'>Today&apos;s Weather</h3>
             <ul className='text-sm text-right text-gray-700'>
               <li className='flex items-center justify-end'>
                 {forecast.day.condition.icon !== '' && (

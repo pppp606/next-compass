@@ -2,10 +2,17 @@ import axios from 'axios';
 import OpenAI from "openai";
 import { questions } from '@/components/questions';
 
+export type LlmResultJson = {
+  city: string;
+  reasons: string;
+  rent: number[];
+}
+
 export type RecommendationsCity = {
   name: string;
   reasons: string;
   images: string[];
+  rent: number[];
 }
 
 export type UnsplashResponseItem = {
@@ -22,14 +29,14 @@ export type UnsplashResponseItem = {
 
 export async function getRecommendations(country: string, city: string, answers: string[]) {
   let prompt = `
-Based on the following answers, please suggest three potential relocation destinations. The suggestions should include:
+Based on the following answers, please suggest six potential relocation destinations. The suggestions should include:
 
 1. Four realistic relocation destinations **within the country where I currently reside**, based on the user's preferences and practical considerations.
 2. Two **challenging relocation destination outside the user's current country**, which offers a unique lifestyle experience.
 
 For each destination, include:
 - The name of the destination (as a single city name, e.g., "Tokyo").
-- A brief explanation of why the destination matches the criteria.\n`
+- A brief explanation of why the destination matches the criteria. The explanation should be concise, limited to **300-400 characters**. Ensure the reasons are clear and engaging without exceeding the limit.\n`
 
   prompt += '## Questions and Answers\n';
   prompt += 'q. Where do you currently live?\n';
@@ -43,24 +50,16 @@ For each destination, include:
   });
 
   prompt += `
-## Output format:
-1. Destination: <city_name_within_country>
-  Reason: <reason_for_suggestion>
+Return the result strictly in valid JSON format without any additional text, code blocks, or formatting. Do not include anything outside of the JSON structure.
 
-2. Destination: <city_name_within_country>
-  Reason: <reason_for_suggestion>
-
-3. Destination: <city_name_within_country>
-  Reason: <reason_for_suggestion>
-
-4. Destination: <city_name_within_country>
-  Reason: <reason_for_suggestion>
-
-5. Destination: <city_name_outside_country>(<country_name>)
-  Reason: <reason_for_suggestion>
-
-6. Destination: <city_name_outside_country>(<country_name>)
-  Reason: <reason_for_suggestion>`
+## Output JSON format:
+[
+  {
+    "city": "<city_name>(<country_name>)",
+    "reasons": "<reason_for_suggestion>",
+    "rent": [<City center rent for a 1-bedroom apartment (USD)>, <Suburbs rent for a 1-bedroom apartment (USD)>]
+  }
+]`
 
   const openai = new OpenAI();
   const response = await openai.chat.completions.create({
@@ -71,7 +70,7 @@ For each destination, include:
             content: prompt,
         },
     ],
-    temperature: 0.85,
+    temperature: 0.75,
   });
 
   return response.choices[0].message.content;
